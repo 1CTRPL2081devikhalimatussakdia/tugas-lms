@@ -1,0 +1,104 @@
+class Node {
+  int data;
+  Node? left;
+  Node? right;
+
+  Node(this.data);
+}
+
+class BinaryTree {
+  Node? root;
+
+  void insertLevelOrderQueue(int data) {
+    Node newNode = Node(data);
+    if (root == null) {
+      root = newNode;
+      return;
+    }
+
+    List<Node> queue = [root!];
+    while (queue.isNotEmpty) {
+      Node current = queue.removeAt(0);
+      if (current.left == null) {
+        current.left = newNode;
+        return;
+      } else {
+        queue.add(current.left!);
+      }
+
+      if (current.right == null) {
+        current.right = newNode;
+        return;
+      } else {
+        queue.add(current.right!);
+      }
+    }
+  }
+
+  void insertByTarget(int target, int newData) {
+    if (root == null) {
+      print('Tree is empty');
+      return;
+    }
+
+    Node newNode = Node(newData);
+    List<Node> queue = [root!];
+
+    while (queue.isNotEmpty) {
+      Node current = queue.removeAt(0);
+
+      if (current.data == target) {
+        if (current.left == null) {
+          current.left = newNode;
+          print('Node $newData ditambahkan ke kiri dari $target');
+          return;
+        } else if (current.right == null) {
+          current.right = newNode;
+          print('Node $newData ditambahkan ke kanan dari $target');
+          return;
+        } else {
+          print('Node $target sudah memiliki dua anak');
+          return;
+        }
+      }
+
+      if (current.left != null) queue.add(current.left!);
+      if (current.right != null) queue.add(current.right!);
+    }
+
+    print('Target $target tidak ditemukan dalam tree');
+  }
+
+  List<int> inorderNonRecursive() {
+    List<int> result = [];
+    List<Node> stack = [];
+    Node? current = root;
+
+    while (stack.isNotEmpty || current != null) {
+      while (current != null) {
+        stack.add(current);
+        current = current.left;
+      }
+
+      current = stack.removeLast();
+      result.add(current.data);
+      current = current.right;
+    }
+
+    return result;
+  }
+}
+
+void main() {
+  BinaryTree tree = BinaryTree();
+
+  tree.insertLevelOrderQueue(1);
+  tree.insertLevelOrderQueue(2);
+  tree.insertLevelOrderQueue(3);
+
+  tree.insertByTarget(2, 10); // → akan ditambahkan ke anak kiri/kanan node 2
+  tree.insertByTarget(3, 11);
+  tree.insertByTarget(99, 12); // → target tidak ditemukan
+
+  print('InOrder   : ${tree.inorderNonRecursive()}');
+}
