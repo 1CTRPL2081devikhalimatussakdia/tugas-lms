@@ -1,0 +1,91 @@
+
+class Node {
+  int data;
+  Node? left;
+  Node? right;
+
+  Node(this.data);
+}
+
+class BinaryTree {
+  Node? root;
+
+  // Insert level order secara iteratif dengan queue
+  void insertLevelOrderQueue(int data) {
+    Node newNode = Node(data);
+    if (root == null) {
+      root = newNode;
+      return;
+    }
+
+    List<Node> queue = [root!];
+    while (queue.isNotEmpty) {
+      Node current = queue.removeAt(0);
+
+      if (current.left == null) {
+        current.left = newNode;
+        return;
+      } else {
+        queue.add(current.left!);
+      }
+
+      if (current.right == null) {
+        current.right = newNode;
+        return;
+      } else {
+        queue.add(current.right!);
+      }
+    }
+  }
+
+  // Fungsi rekursif pembantu untuk insert level order
+  bool _insertLevelOrderRecursive(Node? node, int data) {
+    if (node == null) {
+      return false;
+    }
+
+    if (node.left == null) {
+      node.left = Node(data);
+      return true;
+    } else if (node.right == null) {
+      node.right = Node(data);
+      return true;
+    }
+
+    // coba ke kiri dulu
+    if (_insertLevelOrderRecursive(node.left, data)) {
+      return true;
+    }
+
+    // jika gagal di kiri, coba ke kanan
+    return _insertLevelOrderRecursive(node.right, data);
+  }
+
+  // Method publik pemanggil insert level order secara rekursif
+  void insertLevelOrderRecursiveCaller(int data) {
+    if (root == null) {
+      root = Node(data);
+    } else {
+      _insertLevelOrderRecursive(root, data);
+    }
+  }
+}
+
+void main() {
+  BinaryTree tree = BinaryTree();
+
+  // Insert menggunakan queue (iteratif)
+  tree.insertLevelOrderQueue(1);
+  tree.insertLevelOrderQueue(2);
+  tree.insertLevelOrderQueue(3);
+
+  // Insert menggunakan rekursif
+  tree.insertLevelOrderRecursiveCaller(4);
+  tree.insertLevelOrderRecursiveCaller(5);
+
+  print('Root: ${tree.root?.data}');                 // 1
+  print('Left child of root: ${tree.root?.left?.data}');  // 2
+  print('Right child of root: ${tree.root?.right?.data}'); // 3
+  print('Left child of node 2: ${tree.root?.left?.left?.data}'); // 4
+  print('Right child of node 2: ${tree.root?.left?.right?.data}'); // 5
+}
